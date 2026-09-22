@@ -32,6 +32,7 @@ class OnBoardingScreen extends StatelessWidget {
                     "Every purchase brings you closer to exclusive benefits.",
                 wedth: AppSize.size.width * 0.8,
                 height: AppSize.size.height * 0.25,
+                maxLines: 2,
               ),
               OnBoardingSection(
                 imamePath: AssetsPath.onBoard2,
@@ -40,6 +41,7 @@ class OnBoardingScreen extends StatelessWidget {
                     "Earn rewards with every purchase. Get started today and unlock exclusive benefits!",
                 wedth: 250,
                 height: 250,
+                maxLines: 2,
                 // wedth: AppSize.size.width * 0.8,
                 // height: AppSize.size.height * 0.25,
               ),
@@ -52,6 +54,7 @@ class OnBoardingScreen extends StatelessWidget {
                 // height: AppSize.size.height * 0.25,
                 wedth: 265,
                 height: 265,
+                maxLines: 2,
               ),
             ],
           ),

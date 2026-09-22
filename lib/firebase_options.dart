@@ -59,13 +59,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyClVQlN5Mcyg5i2j1Fv7D7en9yscUKivGk',
-    appId: '1:593611426236:ios:25aa849d8ab9826d8083b9',
+    appId: '1:593611426236:ios:631c6b16dfa5739a8083b9',
     messagingSenderId: '593611426236',
     projectId: 'miltech-c3007',
     storageBucket: 'miltech-c3007.firebasestorage.app',
     androidClientId: '593611426236-epbob3ebnf6cjgdi4003jabfbkcbgjq5.apps.googleusercontent.com',
-    iosClientId: '593611426236-vdp2b9v965bhqdmii1bncssa6nsiuot4.apps.googleusercontent.com',
-    iosBundleId: 'com.miltech.miltech',
+    iosClientId: '593611426236-po9h517o4jjnimu0fnu1m1b4s0833c7j.apps.googleusercontent.com',
+    iosBundleId: 'com.mlitech.rewaldo.customer',
   );
 
 }

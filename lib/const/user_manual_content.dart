@@ -114,7 +114,7 @@ const String kUserManualHtml = '''
 <h2>11.3 Preferences</h2>
 <p>Set your preferred categories and communication preferences from the Preferences screen.</p>
 <h2>11.4 Membership</h2>
-<p>If your loyalty program includes a paid membership tier, the membership screen lets you view plan details and complete checkout for an upgraded membership. My Membership shows your current active plan.</p>
+<p>If your loyalty program includes a paid membership tier, the membership screen lets you view plan details and complete checkout for an upgraded membership. My Membership shows your current active plan. Once a plan is selected, subscription to next plan is available 15 days prior to current plan expiration.</p>
 <h2>11.5 Contact Us, Privacy Policy &amp; Terms</h2>
 <p>Support and legal information are always available from the Profile menu: Contact Us, Privacy Policy, and Terms &amp; Conditions.</p>
 <h1>12. Troubleshooting &amp; Support</h1>

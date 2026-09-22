@@ -180,7 +180,7 @@ const String kPrivacyPolicyHtml = '''
 <p>QR code information is processed solely for operating the Services and improving transaction security.</p>
 
 <h2>8. Payment Processing</h2>
-<p>TMH Digital may facilitate payments associated with subscriptions or other services through authorized third-party payment providers.</p>
+<p>TMH Digital may facilitate payments associated with membership plans through authorized third-party payment providers.</p>
 <p>Depending on the payment option selected, transactions may be processed through banks, payment gateways and digital wallet providers, including services such as KuickPay, Stripe, Easypaisa, JazzCash or other approved payment processors.</p>
 <p>TMH Digital does not store complete credit card numbers, debit card numbers, CVV codes or other sensitive payment authentication information on its own systems. Payment information is securely processed by the respective payment provider in accordance with its own privacy and security policies.</p>
 

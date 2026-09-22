@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                       Flexible(
                         child: AppText(
                           data:
-                          "Hello ${controller.profileController.profileData.value?.firstName ?? "Loading..."}",
+                          "${controller.profileController.profileData.value?.firstName ?? "Loading..."}",
                           fontSize: AppSize.width(value: 18),
                           fontWeight: FontWeight.w700,
                           color: appThemeColor.text2,

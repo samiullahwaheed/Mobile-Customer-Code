@@ -51,7 +51,7 @@ class AuthRepository {
       }
 
       final body = storedRefreshToken.isNotEmpty
-          ? {"refreshToken": storedRefreshToken}
+          ? {"refreshToken": storedRefreshToken, "device": "user"}
           : null;
 
       AppPrint.appLog("resetToken: calling /auth/refresh-token");

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>593611426236-vdp2b9v965bhqdmii1bncssa6nsiuot4.apps.googleusercontent.com</string>
+	<string>593611426236-po9h517o4jjnimu0fnu1m1b4s0833c7j.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.593611426236-vdp2b9v965bhqdmii1bncssa6nsiuot4</string>
+	<string>com.googleusercontent.apps.593611426236-po9h517o4jjnimu0fnu1m1b4s0833c7j</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>593611426236-epbob3ebnf6cjgdi4003jabfbkcbgjq5.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.miltech.miltech</string>
+	<string>com.mlitech.rewaldo.customer</string>
 	<key>PROJECT_ID</key>
 	<string>miltech-c3007</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:593611426236:ios:25aa849d8ab9826d8083b9</string>
+	<string>1:593611426236:ios:631c6b16dfa5739a8083b9</string>
 </dict>
 </plist>

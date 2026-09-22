@@ -45,7 +45,7 @@ class AuthScreen extends StatelessWidget {
                       color: AppColor.button1Light,
                     ),
                     AppText(
-                      data: "Let's dive in into your occount",
+                      data: "Let's dive into your occount",
                       fontSize: AppSize.width(value: 18),
                       fontWeight: FontWeight.w600,
                       color: AppColor.button1Light,

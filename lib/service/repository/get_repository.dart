@@ -1059,6 +1059,35 @@ class GetRepository {
     return null;
   }
 
+  /// Most recent sales-rep upgrade request raised by this customer, if any.
+  ///
+  /// Used to guard against re-submitting a sales-rep upgrade request: the
+  /// backend silently no-ops a second same-day request instead of returning
+  /// an error, so the app checks this first to show the right message.
+  Future<Map<String, dynamic>?> getLatestSalesRepRequest({
+    required String customerId,
+  }) async {
+    try {
+      final response = await apiServices.apiGetServices(
+        AppApiEndPoint.instance.salesRep,
+        queryParameters: {
+          "customerId": customerId,
+          "sort": "-createdAt",
+          "limit": 1,
+        },
+      );
+      if (response != null && response["data"] is List) {
+        final list = response["data"] as List;
+        if (list.isNotEmpty && list.first is Map) {
+          return Map<String, dynamic>.from(list.first as Map);
+        }
+      }
+    } catch (e) {
+      AppPrint.appError(e, title: "Get Latest Sales Rep Request Error");
+    }
+    return null;
+  }
+
   /// Poll a Kuickpay order until the backend has it as "completed".
   /// Used as a fallback while we wait for Kuickpay's server-to-server IPN.
   Future<String?> getKuickpayOrderStatus({required String orderId}) async {

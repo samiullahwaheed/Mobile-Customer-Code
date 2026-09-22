@@ -23,7 +23,19 @@ class NavigationScreenController extends GetxController {
   bool isExpanded = false;
 
   final ScrollController scrollController = ScrollController();
-  ProfileController profileController = Get.put(ProfileController());
+  // Reuse the shared ProfileController if one is already registered (e.g.
+  // by AppBinding on the sign-in path); only create one here if truly none
+  // exists yet (the fresh-signup path never hits a binding that registers
+  // it). A plain Get.put() here would replace the global instance and
+  // orphan any widget/controller (e.g. ProfileScreen's GetBuilder) that had
+  // already grabbed a reference to the old one — that reference would never
+  // see the fetchProfileData() update below, leaving it stuck on
+  // "Loading..." forever after a fresh signup. A plain Get.find() would
+  // throw outright on that same fresh-signup path, since nothing registers
+  // ProfileController before this point there.
+  ProfileController profileController = Get.isRegistered<ProfileController>()
+      ? Get.find<ProfileController>()
+      : Get.put(ProfileController());
   PostRepository postRepository = PostRepository.instance;
   GetRepository getRepository = GetRepository.instance;
   Rxn<SellRequistModel> sellRequist = Rxn<SellRequistModel>();

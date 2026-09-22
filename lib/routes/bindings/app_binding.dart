@@ -26,30 +26,38 @@ import 'package:loyalty_customer/screen/voucher_screen/controller/voucher_contro
 class AppBinding extends Bindings {
   @override
   dependencies() {
-    Get.lazyPut(() => NotificationSettingController());
-    Get.lazyPut(() => RecentlyViewController());
-    Get.lazyPut(() => ProfileController());
-    Get.lazyPut(() => HomeController());
-    Get.lazyPut(() => PrefferanceController());
-    Get.lazyPut(() => ChnageProfileController());
-    Get.lazyPut(() => PromoAndRewardController());
-    Get.lazyPut(() => PrivicyPolicyController());
-    Get.lazyPut(() => ChnagePassController());
-    Get.lazyPut(() => SinglePromoAndRewardController());
-    Get.lazyPut(() => MyGiftCardController());
-    Get.lazyPut(() => ShowDetailsController());
-    Get.lazyPut(() => GiftCardListController());
-    Get.lazyPut(() => VoucherController());
-    Get.lazyPut(() => SpecificServiceController());
-    Get.lazyPut(() => NotificationController());
-    Get.lazyPut(() => TransactionHistoryController());
-    Get.lazyPut(() => MapDetailsController());
-    Get.lazyPut(() => MySubController());
-    Get.lazyPut(() => RefferFriendListController());
+    // fenix: true — without it, a controller registered here gets fully
+    // unregistered (not just disposed) the moment its originating route is
+    // cleared from the stack (e.g. Get.offAllNamed, used throughout the
+    // purchase/sales-rep flows). Any later Get.find<T>() for it then throws
+    // instead of rebuilding it, which is what was silently crashing the
+    // first-ever navigation to NavigationScreen (HomeController's own
+    // constructor calls Get.find<ProfileController>() and
+    // Get.find<NavigationScreenController>()).
+    Get.lazyPut(() => NotificationSettingController(), fenix: true);
+    Get.lazyPut(() => RecentlyViewController(), fenix: true);
+    Get.lazyPut(() => ProfileController(), fenix: true);
+    Get.lazyPut(() => HomeController(), fenix: true);
+    Get.lazyPut(() => PrefferanceController(), fenix: true);
+    Get.lazyPut(() => ChnageProfileController(), fenix: true);
+    Get.lazyPut(() => PromoAndRewardController(), fenix: true);
+    Get.lazyPut(() => PrivicyPolicyController(), fenix: true);
+    Get.lazyPut(() => ChnagePassController(), fenix: true);
+    Get.lazyPut(() => SinglePromoAndRewardController(), fenix: true);
+    Get.lazyPut(() => MyGiftCardController(), fenix: true);
+    Get.lazyPut(() => ShowDetailsController(), fenix: true);
+    Get.lazyPut(() => GiftCardListController(), fenix: true);
+    Get.lazyPut(() => VoucherController(), fenix: true);
+    Get.lazyPut(() => SpecificServiceController(), fenix: true);
+    Get.lazyPut(() => NotificationController(), fenix: true);
+    Get.lazyPut(() => TransactionHistoryController(), fenix: true);
+    Get.lazyPut(() => MapDetailsController(), fenix: true);
+    Get.lazyPut(() => MySubController(), fenix: true);
+    Get.lazyPut(() => RefferFriendListController(), fenix: true);
 
     // ----------- Navigation Screen Controller
-    Get.lazyPut(() => NavigationScreenController());
-    Get.lazyPut(() => MerchantController());
-    Get.lazyPut(() => MyWalletController());
+    Get.lazyPut(() => NavigationScreenController(), fenix: true);
+    Get.lazyPut(() => MerchantController(), fenix: true);
+    Get.lazyPut(() => MyWalletController(), fenix: true);
   }
 }

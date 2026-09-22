@@ -109,7 +109,7 @@ class ChnageProfileController extends GetxController {
               // CAMERA
               final XFile? image = await picker.pickImage(
                 source: ImageSource.camera,
-                imageQuality: 5,
+                imageQuality: 90,
               );
 
               if (image != null) {
@@ -127,7 +127,7 @@ class ChnageProfileController extends GetxController {
               // GALLERY
               final XFile? image = await picker.pickImage(
                 source: ImageSource.gallery,
-                imageQuality: 5,
+                imageQuality: 90,
               );
 
               if (image != null) {

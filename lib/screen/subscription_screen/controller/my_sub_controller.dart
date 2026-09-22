@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loyalty_customer/routes/app_routes.dart';
+import 'package:loyalty_customer/screen/home_screen/controller/home_controller.dart';
 import 'package:loyalty_customer/screen/home_screen/model/subscription_summery_model.dart';
 import 'package:loyalty_customer/screen/profile_section/profile_screen/model/profile_model.dart';
 import 'package:loyalty_customer/screen/subscription_screen/model/package_list_model.dart';
@@ -83,6 +84,31 @@ class MySubController extends GetxController {
   }
 
   void salesRep({required String packageId}) async {
+    final customerId = profileValue.value?.id;
+
+    if (customerId != null && customerId.isNotEmpty) {
+      final latestRequest = await _getRepository.getLatestSalesRepRequest(
+        customerId: customerId,
+      );
+
+      if (latestRequest != null && _wasCreatedToday(latestRequest['createdAt'])) {
+        final subscriptionStatus = latestRequest['subscriptionStatus']?.toString();
+
+        if (subscriptionStatus == 'active') {
+          // Already upgraded once today — backend silently ignores a second
+          // request on the same day, so block it here with a clear message.
+          AppSnackBar.error("You cannot upgrade your plan through the sales representative twice in a day.");
+        } else {
+          // Previous request today is still awaiting sales-rep approval.
+          AppSnackBar.message(
+            "You already have a pending upgrade request awaiting approval.",
+          );
+          Get.toNamed(AppRoutes.instance.waitingScreen);
+        }
+        return;
+      }
+    }
+
     final response = await _postRepository.salesRep(packageId: packageId);
     if (response) {
       Get.toNamed(AppRoutes.instance.waitingScreen);
@@ -91,6 +117,13 @@ class MySubController extends GetxController {
     } else {
       AppSnackBar.error("Failed to add Sales Rep");
     }
+  }
+
+  bool _wasCreatedToday(dynamic createdAt) {
+    final date = DateTime.tryParse(createdAt?.toString() ?? '')?.toLocal();
+    if (date == null) return false;
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
   }
 
   // -------------- Subscription payment with WebView --------------
@@ -106,19 +139,22 @@ class MySubController extends GetxController {
       if (response != null &&
           response.success == true &&
           response.data?.url != null) {
+        // Paid plan — Stripe checkout
         final url = response.data!.url!;
         stripeUrl.value = url;
         _initializeWebView(url);
         AppPrint.appLog("✅ Payment package URL received: $url");
-      } else {
-        AppSnackBar.success("You are already subscribed");
-
-        Get.offAllNamed(
-          AppRoutes.instance.navigationScreen,
-        ); // this logic implementing by mahabub
-
-        // _showErrorSnackbar('Failed to get checkout URL');
+      } else if (response != null && response.success == true) {
+        // Free plan — activated directly, no checkout redirect involved
+        await _refreshAfterPayment();
+        AppSnackBar.success(
+          response.message ?? "Your free plan has been activated!",
+        );
+        Get.offAllNamed(AppRoutes.instance.navigationScreen);
       }
+      // response == null means the request failed (e.g. free plan already
+      // used, or a network error) — apiPostServices already surfaces that
+      // message itself, so there's nothing further to show here.
     } catch (e) {
       _showErrorSnackbar('An error occurred: $e');
       AppPrint.appError(e, title: "Payment Package Error");
@@ -284,8 +320,9 @@ class MySubController extends GetxController {
     AppPrint.appLog('🎉 Kuickpay Payment Success Detected: $url');
 
     isPaymentLoading.value = true;
+    bool activated = false;
     try {
-      final activated = await _confirmKuickpayPayment(uri.queryParameters);
+      activated = await _confirmKuickpayPayment(uri.queryParameters);
 
       // Whether or not the confirm call succeeded, pull fresh data so the
       // membership + home screens never show stale "No Subscription".
@@ -301,7 +338,11 @@ class MySubController extends GetxController {
       isPaymentLoading.value = false;
     }
 
-    _showSuccessDialog();
+    if (activated) {
+      _showSuccessDialog();
+    } else {
+      Get.back();
+    }
   }
 
   /// Confirm with our backend, then poll briefly in case activation is coming
@@ -332,7 +373,7 @@ class MySubController extends GetxController {
     }
 
     // Fallback: give the IPN a few seconds to land.
-    for (var attempt = 0; attempt < 4; attempt++) {
+    for (var attempt = 0; attempt < 8; attempt++) {
       await Future.delayed(const Duration(seconds: 2));
       final polled = await _getRepository.getKuickpayOrderStatus(
         orderId: orderId,
@@ -345,6 +386,14 @@ class MySubController extends GetxController {
     return false;
   }
 
+  /// Public entry point so flows outside this controller (e.g. the sales-rep
+  /// waiting screen, once an admin approves the request and the plan
+  /// activates) can trigger the same refresh a payment here would — without
+  /// this, an already-open "My Membership" screen keeps showing stale data
+  /// ("Choose Plan" on a package the user just got approved for) until the
+  /// screen is fully torn down and rebuilt.
+  Future<void> refreshAfterExternalActivation() => _refreshAfterPayment();
+
   /// Re-fetch everything the subscription state is rendered from.
   Future<void> _refreshAfterPayment() async {
     await Future.wait([
@@ -352,6 +401,15 @@ class MySubController extends GetxController {
       getSubSummary(),
       getPackageList(showLoading: false),
     ]);
+
+    // HomeController is a long-lived singleton that only fetches its own
+    // subscription summary once (onInit). Without this, the Home screen's
+    // header badge keeps showing stale data (or nothing, for a first-time
+    // buyer) after a purchase here until the app restarts or the user
+    // manually pulls to refresh Home.
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().getSubSummary();
+    }
   }
 
   /// Check if Stripe checkout was successful
@@ -383,30 +441,7 @@ class MySubController extends GetxController {
       _showSuccessDialog();
     }
   }
-  // void _checkConnectionSuccess(String url) {
-  //   // Prevent multiple dialogs
-  //   if (_dialogShown.value) return;
-
-  //   // Check for success patterns in URL
-  //   // Stripe typically redirects back after successful payment
-  //   final uri = Uri.tryParse(url);
-  //   if (uri != null) {
-  //     // Check if URL contains success or return parameters from Stripe
-  //     final hasSuccess =
-  //         uri.path.contains('/success') ||
-  //         uri.queryParameters.containsKey('success');
-  //     final hasReturn =
-  //         uri.path.contains('/return') ||
-  //         uri.queryParameters.containsKey('return');
-
-  //     if (hasSuccess || hasReturn) {
-  //       _dialogShown.value = true;
-
-  //       _showSuccessDialog();
-  //     }
-  //   }
-  // }
-
+  
   /// Show success dialog
   void _showSuccessDialog() {
     Get.offAllNamed(AppRoutes.instance.confirmScreen);
@@ -423,35 +458,78 @@ class MySubController extends GetxController {
     }
   }
 
-  /// Package ids the user currently holds an ACTIVE subscription for.
-  Set<String> get _activePackageIds {
+  /// Active (not-yet-expired) subscriptions, keyed by package id.
+  Map<String, Subscription> get _activeSubscriptionsByPackageId {
     final subs = profileValue.value?.subscriptions ?? [];
-    return subs
-        .where((sub) {
-      if ((sub.status ?? '').toLowerCase() != 'active') return false;
+    final result = <String, Subscription>{};
+    for (final sub in subs) {
+      if ((sub.status ?? '').toLowerCase() != 'active') continue;
       final end = DateTime.tryParse(sub.endDate ?? '');
-      if (end != null && end.isBefore(DateTime.now())) return false;
-      return (sub.packageId ?? '').isNotEmpty;
-    })
-        .map((sub) => sub.packageId!)
-        .toSet();
+      if (end != null && end.isBefore(DateTime.now())) continue;
+      final packageId = sub.packageId;
+      if (packageId == null || packageId.isEmpty) continue;
+      result[packageId] = sub;
+    }
+    return result;
   }
 
-  /// true  -> show "Choose Plan" (user can buy this package)
-  /// false -> show "Claimed"    (already subscribed / not available)
-  ///
-  /// Previously this was driven by the card's list index and by matching plan
-  /// TITLES, which meant a freshly bought package still rendered as buyable.
-  /// It is now driven by the actual active subscription package ids that come
-  /// back from /user/profile.
+  /// Days left on the current plan above which activating ANY other plan is
+  /// blocked outright (see [blockNewActivation]). Tier no longer matters —
+  /// once the current plan drops to this many days or fewer, switching to
+  /// any plan is allowed.
+  static const int _renewalWindowDays = 15;
+
+  /// The user's highest-value currently-active subscription, looked up
+  /// against packageList since Subscription itself only carries a
+  /// packageId, not a price. Null when the user has no active plan.
+  Subscription? get _primaryActiveSubscription {
+    Subscription? primary;
+    double? maxPrice;
+    for (final sub in _activeSubscriptionsByPackageId.values) {
+      PackageModel? pkg;
+      for (final p in packageList) {
+        if (p.id == sub.packageId) {
+          pkg = p;
+          break;
+        }
+      }
+      if (pkg == null) continue;
+      if (maxPrice == null || pkg.price > maxPrice) {
+        maxPrice = pkg.price;
+        primary = sub;
+      }
+    }
+    return primary;
+  }
+
+  /// Days left on [_primaryActiveSubscription], or null if the user has no
+  /// active plan.
+  int? get currentPlanRemainingDays {
+    final end = DateTime.tryParse(_primaryActiveSubscription?.endDate ?? '');
+    return end?.difference(DateTime.now()).inDays;
+  }
+
+  /// true -> activating any other plan should be blocked with the "you
+  /// already have an active membership" popup instead of opening the
+  /// payment sheet. Higher/lower tier no longer matters — only how much
+  /// time is left on the current plan does.
+  bool get blockNewActivation {
+    final days = currentPlanRemainingDays;
+    if (days == null) return false;
+    return days > _renewalWindowDays;
+  }
+
+  /// true  -> show "Choose Plan" (user can activate this package)
+  /// false -> show "Claimed"    (this is the package the user currently holds)
   bool isPlanClaimed(num? price, String? value, int index, {String? packageId}) {
-    // 👉 Already subscribed to this exact package
-    if (packageId != null && _activePackageIds.contains(packageId)) {
+    // 👉 This exact package is the one currently active — lock its own card.
+    if (packageId != null && _activeSubscriptionsByPackageId.containsKey(packageId)) {
       return false;
     }
 
-    // 👉 Free plan can only ever be used once
-    if (profileValue.value?.hasUsedFreePlan == true && price == 0) {
+    // 👉 Free plan is only for users who've never had ANY subscription before
+    // (paid or free) — not just users who've already used a free plan.
+    if (price == 0 && (profileValue.value?.totalSubscriptions ?? 0) > 0) {
       return false;
     }
 

@@ -88,7 +88,8 @@ class ConfirmScreen extends StatelessWidget {
               height: 1.5,
               textAlign: TextAlign.center,
               data:
-                  "You're all set to enjoy premium features and exclusive benefits. Let’s get started! If you need any help, we're here for you.",
+                  "You're all set to enjoy premium features and exclusive benefits. Let’s get started!",
+              maxLines: 2,
               fontSize: AppSize.width(value: 12),
               fontWeight: FontWeight.w500,
               color: AppColor.button4Dark,
