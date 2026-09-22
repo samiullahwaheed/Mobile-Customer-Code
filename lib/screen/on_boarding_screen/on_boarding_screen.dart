@@ -143,6 +143,7 @@ class OnBoardingSection extends StatelessWidget {
   final String imamePath;
   final String title;
   final String subTitle;
+  final int? maxLines;
   const OnBoardingSection({
     super.key,
     required this.imamePath,
@@ -150,6 +151,7 @@ class OnBoardingSection extends StatelessWidget {
     required this.subTitle,
     required this.wedth,
     required this.height,
+    this.maxLines,
   });
 
   @override
@@ -189,6 +191,7 @@ class OnBoardingSection extends StatelessWidget {
                 fontWeight: FontWeight.w400,
                 textAlign: TextAlign.center,
                 color: Colors.black,
+                maxLines: maxLines,
               ),
             ],
           ),
