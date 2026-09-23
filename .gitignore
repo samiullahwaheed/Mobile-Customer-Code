@@ -15,7 +15,6 @@ FCM_FLOW_DIAGRAM.txt
 FIREBASE_NOTIFICATIONS_SETUP.md
 SOCKET_FIX_SUMMARY.md
 README.md
-.env
 
 # IntelliJ related
 *.iml
