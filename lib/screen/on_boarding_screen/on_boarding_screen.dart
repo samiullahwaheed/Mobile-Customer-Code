@@ -54,7 +54,7 @@ class OnBoardingScreen extends StatelessWidget {
                 // height: AppSize.size.height * 0.25,
                 wedth: 265,
                 height: 265,
-                maxLines: 2,
+                maxLines: 3,
               ),
             ],
           ),

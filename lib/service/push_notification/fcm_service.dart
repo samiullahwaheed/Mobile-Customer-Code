@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
@@ -58,6 +60,17 @@ class FCMService {
   /// Get FCM token
   static Future<String?> getToken() async {
     try {
+      // iOS: getToken() fails until APNs token is available
+      if (Platform.isIOS) {
+        String? apnsToken = await _firebaseMessaging.getAPNSToken();
+        for (int i = 0; apnsToken == null && i < 10; i++) {
+          await Future.delayed(const Duration(seconds: 1));
+          apnsToken = await _firebaseMessaging.getAPNSToken();
+        }
+        debugPrint('🍎 APNs Token: $apnsToken');
+        if (apnsToken == null) return null;
+      }
+
       String? token = await _firebaseMessaging.getToken();
 
       if (token != null) {
