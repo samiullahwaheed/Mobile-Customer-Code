@@ -1,14 +1,19 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:loyalty_customer/routes/app_routes.dart';
 import 'package:loyalty_customer/screen/profile_section/profile_screen/model/profile_model.dart';
 import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
+import 'package:loyalty_customer/service/push_notification/fcm_service.dart';
 import 'package:loyalty_customer/service/repository/get_repository.dart';
+import 'package:loyalty_customer/service/repository/post_repository.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
 
 class SplashController extends GetxController {
   final GetStorageServices storageServices = GetStorageServices.instance;
   final GetRepository getRepository = GetRepository.instance;
+  final PostRepository postRepository = PostRepository.instance;
 
   Rxn<ProfileModelData> profileModelData = Rxn<ProfileModelData>();
 
@@ -32,25 +37,81 @@ class SplashController extends GetxController {
     }
   }
 
-  // নেটিভ স্প্ল্যাশ সরিয়ে দিয়ে টার্গেট রুটে নেভিগেট করা হয়, যাতে অ্যাপ স্প্ল্যাশে আটকে না থাকে
   void _navigateTo(String route, {Object? arguments}) {
     FlutterNativeSplash.remove();
     Get.offAllNamed(route, arguments: arguments);
   }
 
-  // টোকেন থাকলে প্রোফাইল ডেটা নিয়ে আসার ফাংশন
+  /// Logged-in user ka profile aur push tokens sync karta hai.
   Future<void> _fetchInitialData() async {
     final String token = storageServices.getToken();
+
     if (token.isNotEmpty) {
       await getSubscription();
+      await syncPushTokens();
     }
   }
 
-  // নেভিগেশন লজিক (যেখানে সব কন্ডিশন চেক হবে)
+  /// FCM aur iOS APNs token backend par save karta hai.
+  Future<void> syncPushTokens() async {
+    try {
+      final String? fcmToken = await FCMService.getToken();
+
+      if (fcmToken == null || fcmToken.isEmpty) {
+        AppPrint.appError(
+          "FCM token not available",
+          title: "Push Token Sync",
+        );
+        return;
+      }
+
+      String? apnsToken;
+
+      if (Platform.isIOS) {
+        // iOS par APNs token aane mein kuch seconds lag sakte hain.
+        for (int i = 0; i < 10; i++) {
+          apnsToken = await FCMService.getAPNSToken();
+
+          if (apnsToken != null && apnsToken.isNotEmpty) {
+            break;
+          }
+
+          await Future.delayed(const Duration(seconds: 1));
+        }
+
+        if (apnsToken == null || apnsToken.isEmpty) {
+          AppPrint.appError(
+            "APNs token not available after waiting",
+            title: "Push Token Sync",
+          );
+          return;
+        }
+      }
+
+      final bool updated = await postRepository.updateUserProfile(
+        fcmToken: fcmToken,
+        apnsToken: apnsToken,
+      );
+
+      AppPrint.apiResponse(
+        {
+          "updated": updated,
+          "fcmTokenAvailable": fcmToken.isNotEmpty,
+          "apnsTokenAvailable": apnsToken?.isNotEmpty == true,
+        },
+        title: "Push Tokens Synced",
+      );
+    } catch (e) {
+      AppPrint.appError(
+        e,
+        title: "Push Token Sync Failed",
+      );
+    }
+  }
+
   void _handleNavigation() {
     final String token = storageServices.getToken();
 
-    // টোকেন না থাকলে সরাসরি অনবোর্ডিং
     if (token.isEmpty) {
       if (storageServices.getIsUserFirstTime() == true) {
         _navigateTo(AppRoutes.instance.authScreen);
@@ -62,7 +123,6 @@ class SplashController extends GetxController {
 
     final data = profileModelData.value;
 
-    // ১. লোকেশন চেক (Null safety এবং empty coordinates চেক)
     bool isLocationEmpty =
         data?.location?.coordinates == null ||
         data!.location!.coordinates!.isEmpty ||
@@ -73,36 +133,38 @@ class SplashController extends GetxController {
       return;
     }
 
-    // ২. ইউজার ওয়েটিং লিস্টে আছে কিনা
     if (data.isUserWaiting == true) {
       _navigateTo(AppRoutes.instance.waitingScreen);
       return;
     }
 
-    // ৩. সাবস্ক্রিপশন চেক
-    if (data?.subscription == "active") {
+    if (data.subscription == "active") {
       _navigateTo(AppRoutes.instance.navigationScreen);
     } else {
-      // সাবস্ক্রিপশন একটিভ না থাকলে পেমেন্ট/সাবস্ক্রিপশন স্ক্রিন
-      _navigateTo(AppRoutes.instance.mySubScreen, arguments: {'value': 1});
+      _navigateTo(
+        AppRoutes.instance.mySubScreen,
+        arguments: {'value': 1},
+      );
     }
   }
 
-  // প্রোফাইল ডেটা API থেকে ফেচ করার ফাংশন
   Future<void> getSubscription() async {
     try {
       final response = await getRepository.getProfile();
+
       if (response != null) {
         profileModelData.value = response;
+
         AppPrint.apiResponse(
           profileModelData.value?.subscription ?? "No Subscription Found",
           title: "Splash Profile Status",
         );
       }
     } catch (e) {
-      AppPrint.appError(e, title: "getSubscription API Call Failed");
+      AppPrint.appError(
+        e,
+        title: "getSubscription API Call Failed",
+      );
     }
   }
 }
-
-
