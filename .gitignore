@@ -15,6 +15,7 @@ FCM_FLOW_DIAGRAM.txt
 FIREBASE_NOTIFICATIONS_SETUP.md
 SOCKET_FIX_SUMMARY.md
 README.md
+.env
 
 # IntelliJ related
 *.iml
@@ -53,6 +54,7 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+.env
 
 # Local production API URLs (copy from dart_defines/prod.local.json.example)
 dart_defines/prod.local.json
