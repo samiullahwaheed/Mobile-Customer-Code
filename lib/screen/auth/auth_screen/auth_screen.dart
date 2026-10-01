@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loyalty_customer/const/app_color.dart';
@@ -107,9 +109,11 @@ class AuthScreen extends StatelessWidget {
                               ),
                             );
                     }),
+                    // Apple sign-in is iOS only; Android shows Google only
+                    if (Platform.isIOS)
                     GestureDetector(
                       onTap: () {
-                        AppSnackBar.message("Not Implement Yet");
+                        AppSnackBar.message("Not Implemented Yet");
                       },
                       child: Container(
                         width: AppSize.width(value: double.infinity),
@@ -168,7 +172,7 @@ class AuthScreen extends StatelessWidget {
                         ),
                         child: Center(
                           child: AppText(
-                            data: "Do not have an account? Sign up",
+                            data: "Don't have an account? Sign up",
                             fontSize: AppSize.width(value: 18),
                             fontWeight: FontWeight.w400,
                             color: AppColor.button2Light,

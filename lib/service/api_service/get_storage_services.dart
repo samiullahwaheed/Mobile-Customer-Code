@@ -89,7 +89,26 @@ class GetStorageServices {
       return null;
     }
   }
-  
+
+  ///////////////////////  last FCM token sent to backend (skips repeat syncs)
+  Future<void> setSyncedFCMtoken(String value) async {
+    try {
+      await box.write("syncedFcmToken", value);
+      await box.save();
+    } catch (e) {
+      errorLog("set synced fcm token", e);
+    }
+  }
+
+  String? getSyncedFCMtoken() {
+    try {
+      return box.read("syncedFcmToken");
+    } catch (e) {
+      errorLog("get synced fcm token", e);
+      return null;
+    }
+  }
+
   ////////////  get language
   String? getLanguage() {
     return box.read(AppStorageKey.instance.language);
@@ -120,6 +139,7 @@ class GetStorageServices {
 
       await box.remove("active"); // Remove token
       await box.remove("fcmToken"); // Remove token
+      await box.remove("syncedFcmToken"); // next login must send the token again
       await box.remove(AppStorageKey.instance.themeModeDark); // Remove Theme
       await box.save();
 

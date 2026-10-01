@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:loyalty_customer/routes/app_routes.dart';
 import 'package:loyalty_customer/screen/profile_section/profile_screen/model/profile_model.dart';
 import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
+import 'package:loyalty_customer/service/auth_navigation/auth_navigation.dart';
 import 'package:loyalty_customer/service/repository/get_repository.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
 
@@ -61,6 +62,16 @@ class SplashController extends GetxController {
     }
 
     final data = profileModelData.value;
+
+    // Google sign-up not finished (no phone yet): resume the referral/phone step
+    if (data != null && (data.phone == null || data.phone!.isEmpty)) {
+      FlutterNativeSplash.remove();
+      AuthNavigation.afterLogin({
+        "needsPhone": true,
+        "hasReferral": data.hasReferral == true,
+      });
+      return;
+    }
 
     // ১. লোকেশন চেক (Null safety এবং empty coordinates চেক)
     bool isLocationEmpty =

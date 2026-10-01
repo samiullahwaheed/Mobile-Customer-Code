@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:loyalty_customer/const/app_color.dart';
 import 'package:loyalty_customer/const/assets_icons_path.dart';
 import 'package:loyalty_customer/routes/app_routes.dart';
+import 'package:loyalty_customer/service/repository/account_repository.dart';
 import 'package:loyalty_customer/service/repository/auth_repository.dart';
 import 'package:loyalty_customer/utils/app_size.dart';
 import 'package:loyalty_customer/widget/app_button/app_button.dart';
 import 'package:loyalty_customer/widget/app_image/app_image.dart';
+import 'package:loyalty_customer/widget/app_image/app_image_circular.dart';
 import 'package:loyalty_customer/widget/app_input/app_input_widget_two.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
 import 'package:loyalty_customer/widget/app_log/gap.dart';
@@ -39,8 +41,22 @@ class _EnterReffalIdScreenState extends State<EnterReffalIdScreen> {
     super.dispose();
   }
 
+  // Opened during Google sign-up: the account already exists, so the
+  // referral is applied to it directly and the flow continues to the phone step.
+  bool get _googleSignUp =>
+      Get.arguments is Map && Get.arguments["googleSignUp"] == true;
+
   void verifyReffalId() async {
     AppPrint.apiResponse("verifyReffalId", title: "verifyReffalId");
+    if (_googleSignUp) {
+      // Backend validates the ID; its error message is shown on failure
+      final applied = await AccountRepository.instance.applyReferral(
+        referralId: reffalIdController.text.trim(),
+      );
+      if (applied) Get.offAllNamed(AppRoutes.instance.addPhoneScreen);
+      return;
+    }
+
     final response = await AuthRepository.instance.referralVerify(
       ref: reffalIdController.text,
     );
@@ -85,7 +101,7 @@ class _EnterReffalIdScreenState extends State<EnterReffalIdScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        data: "Join Miltech Today!",
+                        data: "Join Rewaldo Today!",
                         fontSize: AppSize.width(value: 34),
                         fontWeight: FontWeight.w700,
                         color: AppColor.button1Light,
@@ -104,11 +120,12 @@ class _EnterReffalIdScreenState extends State<EnterReffalIdScreen> {
                   left: 0,
                   right: 0,
                   child: Center(
-                    child: AppText(
-                      data: "Logo",
-                      fontSize: AppSize.width(value: 80),
-                      fontWeight: FontWeight.w600,
-                      color: AppColor.button1Light,
+                    child: SizedBox(
+                      width: 240,
+                      height: 90,
+                      child: AppImageCircular(
+                        path: "assets/images/rewaldo-logo-white.png",
+                      ),
                     ),
                   ),
                 ),

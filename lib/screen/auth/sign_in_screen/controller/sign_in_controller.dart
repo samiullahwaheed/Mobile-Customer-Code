@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loyalty_customer/routes/app_routes.dart';
 import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
+import 'package:loyalty_customer/service/auth_navigation/auth_navigation.dart';
 import 'package:loyalty_customer/service/push_notification/fcm_service.dart';
 import 'package:loyalty_customer/service/repository/auth_repository.dart';
 import 'package:loyalty_customer/service/repository/post_repository.dart';
@@ -69,28 +69,8 @@ class SignInController extends GetxController {
   }
 
   void _handleNavigation(dynamic user) {
-    // ১. ওয়েটিং লিস্ট চেক (সবচেয়ে গুরুত্বপূর্ণ)
-    if (user["isUserWaiting"] == true) {
-      Get.offAllNamed(AppRoutes.instance.waitingScreen);
-    }
-    // ২. লোকেশন চেক (coordinates 0,0 হলে লোকেশন সেট করতে হবে)
-    else if (_isLocationEmpty(user["location"])) {
-      Get.offAllNamed(AppRoutes.instance.locationScreen);
-    }
-    // ৩. সাবস্ক্রিপশন চেক
-    else if (user["subscription"] == "active") {
-      Get.offAllNamed(AppRoutes.instance.navigationScreen);
-    }
-    // ৪. অন্যথায় সাবস্ক্রিপশন স্ক্রিন
-    else {
-      Get.offAllNamed(AppRoutes.instance.mySubScreen, arguments: {'value': 1});
-    }
-  }
-
-  bool _isLocationEmpty(dynamic location) {
-    if (location == null || location["coordinates"] == null) return true;
-    final coords = location["coordinates"];
-    return coords[0] == 0 && coords[1] == 0;
+    // Same rules as Google login
+    AuthNavigation.afterLogin(Map<String, dynamic>.from(user));
   }
 
   Future<void> updateFcmToken() async {
@@ -107,7 +87,9 @@ class SignInController extends GetxController {
         );
         return;
       }
-      await postRepository.updateUserProfile(fcmToken: fcmToken);
+      // Always sent on login (another account may have used this device)
+      final ok = await postRepository.updateUserProfile(fcmToken: fcmToken);
+      if (ok) await storage.setSyncedFCMtoken(fcmToken);
       AppPrint.apiResponse(fcmToken, title: "FCM Token Updated correctly");
     } catch (e) {
       AppPrint.appError(e, title: "FCM Update Failed");

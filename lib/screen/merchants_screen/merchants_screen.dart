@@ -23,7 +23,7 @@ class MerchantsScreen extends StatelessWidget {
         return Scaffold(
           appBar: CustomAppbar(
             showLeading: false,
-            text: "All Merchant",
+            text: "All Merchants",
             appThemeColor: appThemeColor,
           ),
           body: Padding(

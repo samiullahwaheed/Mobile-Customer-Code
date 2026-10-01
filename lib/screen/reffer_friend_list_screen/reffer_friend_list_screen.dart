@@ -110,7 +110,7 @@ class RefferFriendListScreen extends StatelessWidget {
                           ),
                           AppText(
                             data:
-                            "Total Join : ${controller.referralSummaryData.value?.totalJoin}",
+                            "Total Joined : ${controller.referralSummaryData.value?.totalJoin}",
                             fontSize: AppSize.width(value: 14),
                             fontWeight: FontWeight.w400,
                             color: appThemeColor.text2,

@@ -40,7 +40,7 @@ class GetRepository {
         return SellRequistModel.fromJson(response);
       } else {
         AppPrint.appError(response);
-        AppSnackBar.error("Failed to load sell requist");
+        AppSnackBar.error("Failed to load sale request");
       }
     } on DioException catch (error) {
       String errorMessage = "Something went wrong";

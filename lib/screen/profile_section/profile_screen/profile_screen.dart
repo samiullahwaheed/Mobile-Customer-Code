@@ -122,13 +122,23 @@ class ProfileScreen extends StatelessWidget {
                     spacing: AppSize.size.height * 0.03,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProfileRow(
-                        appThemeColor: appThemeColor,
-                        iconPath: AssetsPath.icLock,
-                        onTap: () {
-                          Get.toNamed(AppRoutes.instance.changePassScreen);
-                        },
-                        text: "Password",
+                      Obx(
+                        () => ProfileRow(
+                          appThemeColor: appThemeColor,
+                          iconPath: AssetsPath.icLock,
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.instance.changePassScreen,
+                              arguments: {
+                                "hasPassword": controller.hasPassword,
+                              },
+                            );
+                          },
+                          // Google-only accounts set their first password here
+                          text: controller.hasPassword
+                              ? "Password"
+                              : "Set Password",
+                        ),
                       ),
                       ProfileRow(
                         appThemeColor: appThemeColor,
@@ -278,21 +288,48 @@ class ProfileScreen extends StatelessWidget {
                                         color: Colors.black,
                                       ),
                                       AppText(
-                                        data:
-                                        "Please confirm your password to remove your account.",
+                                        data: controller.hasPassword
+                                            ? "Please confirm your password to remove your account."
+                                            : "Please confirm with the code we send to your phone.",
+                                        maxLines: 3,
                                         fontSize: AppSize.width(value: 16),
                                         fontWeight: FontWeight.w500,
                                         textAlign: TextAlign.center,
                                         color: Colors.black,
                                       ),
-                                      AppInputWidgetTwo(
-                                        isPassWord: true,
-                                        title: "Password",
-                                        hintText: "Password",
-                                        isOptional: true,
-                                        controller:
-                                        controller.passwordController,
-                                      ),
+                                      if (controller.hasPassword)
+                                        AppInputWidgetTwo(
+                                          isPassWord: true,
+                                          title: "Password",
+                                          hintText: "Password",
+                                          isOptional: true,
+                                          controller:
+                                          controller.passwordController,
+                                        )
+                                      else
+                                        // Google-only account: confirm by SMS code
+                                        Obx(
+                                          () => controller.deleteOtpSent.value
+                                              ? AppInputWidgetTwo(
+                                                  title: "Verification Code",
+                                                  hintText: "6-digit code",
+                                                  isOptional: true,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  controller: controller
+                                                      .deleteOtpController,
+                                                )
+                                              : controller
+                                                    .isSendingDeleteOtp
+                                                    .value
+                                              ? const CircularProgressIndicator()
+                                              : AppButton(
+                                                  onTap:
+                                                      controller.sendDeleteOtp,
+                                                  height: 36,
+                                                  title: "Send Code",
+                                                ),
+                                        ),
                                       Gap(height: 4),
                                       Row(
                                         children: [
@@ -403,6 +440,7 @@ class LogOutpopUp extends StatelessWidget {
             ),
             AppText(
               data: "Do you want to log out of your profile?",
+              maxLines: 3,
               fontSize: AppSize.width(value: 16),
               fontWeight: FontWeight.w600,
               color: Colors.black,

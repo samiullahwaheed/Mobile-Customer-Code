@@ -97,73 +97,44 @@ class AuthRepository {
     }
   }
 
-  Future<dynamic> googleAuth({required String idToken}) async {
+  String _dioMessage(DioException error) {
+    final data = error.response?.data;
+    final message = data is Map ? data["message"] : null;
+    return message?.toString() ?? "Something went wrong";
+  }
+
+  /// Google sign-in. Saves the tokens and returns the login `user` summary
+  /// (same as password login, plus needsPhone / hasReferral / hasPassword),
+  /// or null when it failed (the error is already shown).
+  Future<Map<String, dynamic>?> googleAuth({
+    required String idToken,
+    String? fcmToken,
+  }) async {
     try {
-      // Keyboard / input focus remove
       appInPutUnfocused();
 
-      // Google auth API call
       final response = await nonAuthApi.sendRequest.post(
         AppApiEndPoint.instance.googleAuth,
-        data: {"idToken": idToken},
+        data: {
+          "idToken": idToken,
+          if (fcmToken != null && fcmToken.isNotEmpty) "fcmToken": fcmToken,
+        },
       );
 
-      // Check API success
-      if (response.statusCode == 200 &&
-          response.data != null &&
-          response.data["data"] != null) {
-        final data = response.data["data"];
-
-        // -------------------------
-        // Extract required values
-        // -------------------------
-        String accessToken = data["accessToken"] ?? "";
-        bool isFirstTimeUser = data["usesubscriptionrId"] ?? false;
-        String subscription = data["subscription"] ?? "";
-
+      final data = response.data is Map ? response.data["data"] : null;
+      if (response.statusCode == 200 && data is Map && data["user"] is Map) {
         await _saveAuthTokens(Map<String, dynamic>.from(data));
-
-        AppPrint.apiResponse(accessToken, title: "Access Token Saved");
-
-        // -------------------------
-        // User first time logic
-        // -------------------------
-        if (!isFirstTimeUser) {
-          // If subscription active
-          if (subscription.isNotEmpty && subscription == "active") {
-            AppPrint.apiResponse(subscription, title: "Active Subscription");
-            return subscription; // go to premium flow
-          } else {
-            return true; // go to subscription screen
-          }
-        }
-
-        // -------------------------
-        // Old user → direct home
-        // -------------------------
-
-        return true;
+        return Map<String, dynamic>.from(data["user"]);
       }
 
-      // API response invalid
-      AppPrint.apiResponse("Access Token not found!");
-      return false;
-    }
-    // -------------------------
-    // API Error Handling
-    // -------------------------
-    on DioException catch (error) {
-      AppSnackBar.error(
-        error.response?.data["message"] ?? "Something went wrong",
-      );
-      return false;
-    }
-    // -------------------------
-    // Unknown error
-    // -------------------------
-    catch (e) {
+      AppPrint.apiResponse("Google login: unexpected response");
+      return null;
+    } on DioException catch (error) {
+      AppSnackBar.error(_dioMessage(error));
+      return null;
+    } catch (e) {
       errorLog("googleAuth", e);
-      return false;
+      return null;
     }
   }
 

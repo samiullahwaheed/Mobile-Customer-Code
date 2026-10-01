@@ -63,6 +63,16 @@ class AppSnackBar {
     );
   }
 
+  // 🔔 Push notification received while the app is open
+  static void notification({required String title, required String body}) {
+    _showToast(
+      title: title,
+      message: body,
+      bgColor: Colors.white,
+      textColor: Colors.black,
+    );
+  }
+
   // 📘 Message Toast — NAVY BLUE
   static void message(String message) {
     _showToast(

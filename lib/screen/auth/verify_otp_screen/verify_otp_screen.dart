@@ -45,6 +45,8 @@ class VerifyOtpScreen extends StatelessWidget {
 
                 AppText(
                   data: "Verification Code",
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                   fontSize: AppSize.width(value: 30),
                   fontWeight: FontWeight.w700,
                   color: AppColor.button4Dark,
@@ -58,6 +60,7 @@ class VerifyOtpScreen extends StatelessWidget {
                     data:
                         "Please enter the code sent to your Phone to continue.",
                     textAlign: TextAlign.center,
+                    maxLines: 3,
                     fontSize: AppSize.width(value: 16),
                     fontWeight: FontWeight.w400,
                     color: AppColor.button4Dark,
@@ -65,6 +68,8 @@ class VerifyOtpScreen extends StatelessWidget {
                 ),
                 AppText(
                   data: "We've Sent a Code to ${controller.phone},",
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                   fontSize: AppSize.width(value: 16),
                   fontWeight: FontWeight.w700,
                   color: AppColor.button4Dark,
@@ -162,7 +167,7 @@ class VerifyOtpScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppText(
-                      data: 'If you didn’t receive a code. ',
+                      data: 'Didn’t receive a code?',
                       fontSize: AppSize.width(value: 18),
                     ),
                     Obx(

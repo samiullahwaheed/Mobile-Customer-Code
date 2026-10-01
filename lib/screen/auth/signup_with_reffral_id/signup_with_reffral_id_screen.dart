@@ -14,6 +14,11 @@ class SignUpWithReffaleIDScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Opened after a first Google login: the account already exists, so
+    // "No" skips to the phone step instead of the email sign-up form.
+    final bool googleSignUp =
+        Get.arguments is Map && Get.arguments["googleSignUp"] == true;
+
     return Scaffold(
       backgroundColor: AppColor.surfacePrimaryLight,
       body: Column(
@@ -49,8 +54,8 @@ class SignUpWithReffaleIDScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSize.width(value: 20)),
             child: AppText(
-              data:
-                  "Are you signing up with a referral from one of our agents?",
+              data: "Are you signing up with a referral from our agent or your Friend?",
+              maxLines: 2,
               textAlign: TextAlign.center,
               fontSize: AppSize.width(value: 16),
               fontWeight: FontWeight.w400,
@@ -66,7 +71,10 @@ class SignUpWithReffaleIDScreen extends StatelessWidget {
               children: [
                 AppButton(
                   onTap: () {
-                    Get.toNamed(AppRoutes.instance.enterReffralIdScreen);
+                    Get.toNamed(
+                      AppRoutes.instance.enterReffralIdScreen,
+                      arguments: {"googleSignUp": googleSignUp},
+                    );
                   },
                   height: 56,
                   title: "Yes, I have a Referral ID",
@@ -77,7 +85,11 @@ class SignUpWithReffaleIDScreen extends StatelessWidget {
 
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(AppRoutes.instance.signUpScreen);
+                    Get.toNamed(
+                      googleSignUp
+                          ? AppRoutes.instance.addPhoneScreen
+                          : AppRoutes.instance.signUpScreen,
+                    );
                   },
                   child: Container(
                     width: AppSize.width(value: double.infinity),
@@ -90,7 +102,9 @@ class SignUpWithReffaleIDScreen extends StatelessWidget {
                     ),
                     child: Center(
                       child: AppText(
-                        data: "No, I'll Sign Up on My Own",
+                        data: googleSignUp
+                            ? "No, Skip"
+                            : "No, I'll Sign Up on My Own",
                         fontSize: AppSize.width(value: 18),
                         fontWeight: FontWeight.w400,
                         color: AppColor.button2Light,

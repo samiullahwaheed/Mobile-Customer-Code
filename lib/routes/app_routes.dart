@@ -14,6 +14,7 @@ class AppRoutes {
   final String signupWithReffralIdScreen = "/signup-with-reffral-id-screen";
   final String enterReffralIdScreen = "/enter-reffarl-id-screen";
   final String verifyOtpScreen = "/verify-otp-screen";
+  final String addPhoneScreen = "/add-phone-screen";
   final String forgetPassVerifyOtpScreen = "/forgetpass-verify-otp-screen";
   final String forgetPassScreen = "/forget-pass-screen";
   final String authScreen = "/auth-screen";

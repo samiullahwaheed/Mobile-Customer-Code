@@ -18,13 +18,13 @@ const String kUserManualHtml = '''
 <h2>2.3 Creating an Account</h2>
 <p>You can join Rewaldo in two ways:</p>
 <ul>
-<li>Sign Up — create a new account using your name, email/phone number, and a password. Password should contain 8 digits with special characters</li>
+<li>Sign Up — create a new account using your name, email/phone number, and a password. Password should contain 8 digits with special characters. Sign Up can be performed through Google/Apple account as well.</li>
 <li>Sign Up with a Referral ID — if a friend invited you, enter their referral code during sign-up to link your account to them and unlock referral rewards for both of you.</li>
 <li>You will receive a OTP (One Time Password) on your registered email/phone number to verify your account. Enter the OTP on the Verify OTP screen to complete the sign-up process.</li>
 </ul>
 <h2>2.4 Signing In</h2>
 <ul>
-<li>Open the app and select Sign In.</li>
+<li>Open the app and select Continue with Google/Apple or Sign In.</li>
 <li>Enter your registered email/phone number and password.</li>
 <li>Tap Sign In to reach your Home screen.</li>
 </ul>

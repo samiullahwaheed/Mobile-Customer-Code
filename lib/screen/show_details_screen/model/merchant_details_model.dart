@@ -34,8 +34,16 @@ class MerchantDetailsModelData {
 
   factory MerchantDetailsModelData.fromJson(Map<String, dynamic> json) {
     return MerchantDetailsModelData(
+      // The user's card comes as a sibling `digitalCard`, not inside `merchant`
       merchant: json['merchant'] is Map<String, dynamic>
-          ? Merchant.fromJson(json['merchant'])
+          ? Merchant.fromJson({
+              ...json['merchant'],
+              if (json['digitalCard'] is Map<String, dynamic>) ...{
+                'digitalCardId': json['digitalCard']['_id'],
+                'cardCode': json['digitalCard']['cardCode'],
+                'availablePoints': json['digitalCard']['availablePoints'],
+              },
+            })
           : null,
       promotions: json['promotions'] is List
           ? List<Promotion>.from(
@@ -56,9 +64,10 @@ class Merchant {
   final String website;
   final String about;
   final String? businessName;
-   String? digitalCardId;
-  final String? cardCode;
-  final double? availablePoints;
+  // Not final: set locally after "Add Card"
+  String? digitalCardId;
+  String? cardCode;
+  double? availablePoints;
 
   Merchant({
     required this.id,

@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       navigatorKey: navigatorKey, // Add this line to connect the navigatorKey
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Rewaldo',
       // initialRoute: AppRoutes.instance.mySubScreen,
       initialRoute: AppRoutes.instance.initial,
       // initialRoute: AppRoutes.instance.confirmScreen,

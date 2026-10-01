@@ -53,6 +53,8 @@ class ForgetPassScreen extends StatelessWidget {
                       children: [
                         AppText(
                           data: "Forgot Your Password?",
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
                           fontSize: AppSize.width(value: 30),
                           fontWeight: FontWeight.w700,
                           color: AppColor.button4Dark,
@@ -66,6 +68,7 @@ class ForgetPassScreen extends StatelessWidget {
                             data:
                                 "No worries! Enter your phone number below and we'll send you a OTP to reset your password.",
                             textAlign: TextAlign.center,
+                            maxLines: 3,
                             fontSize: AppSize.width(value: 16),
                             fontWeight: FontWeight.w400,
                             color: AppColor.button4Dark,

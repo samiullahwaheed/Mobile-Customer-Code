@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loyalty_customer/routes/app_routes.dart';
+import 'package:loyalty_customer/service/auth_navigation/auth_navigation.dart';
+import 'package:loyalty_customer/service/repository/account_repository.dart';
 import 'package:loyalty_customer/service/repository/auth_repository.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
 import 'package:loyalty_customer/widget/app_snackbar/app_snack_bar.dart';
@@ -20,7 +22,9 @@ class VerifyOtpController extends GetxController {
   Future<void> verifyPhoneOtp() async {
     try {
       isLoading.value = true;
-      final response = await authRepository.resendPhoneOtp(phone: phone ?? "");
+      final response = linkPhone
+          ? await AccountRepository.instance.sendPhoneOtp(phone: phone ?? "")
+          : await authRepository.resendPhoneOtp(phone: phone ?? "");
       if (response) {
         clearOtpFields(); // Clear OTP fields
         AppSnackBar.success("A new OTP has been sent to your phone.");
@@ -36,6 +40,16 @@ class VerifyOtpController extends GetxController {
   Future<void> verifyOtp() async {
     try {
       isLoading.value = true;
+      if (linkPhone) {
+        final verified = await AccountRepository.instance.verifyPhoneOtp(
+          otp: otpTextEditingController.text,
+        );
+        if (verified) {
+          AppSnackBar.success("Phone number verified");
+          AuthNavigation.afterPhoneVerified();
+        }
+        return;
+      }
       final response = await authRepository.phoneVerify(
         phone: phone ?? "",
         otp: otpTextEditingController.text,
@@ -52,11 +66,17 @@ class VerifyOtpController extends GetxController {
   }
 
   String? phone;
+
+  /// Google sign-up phone step: the account already exists, so the code is
+  /// checked by the logged-in phone API and the login flow continues after it.
+  bool linkPhone = false;
+
   @override
   void onInit() {
     super.onInit();
     startTimer();
     phone = Get.arguments["phone"];
+    linkPhone = Get.arguments["linkPhone"] == true;
   }
 
   void startTimer() {

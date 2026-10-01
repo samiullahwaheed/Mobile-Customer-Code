@@ -27,6 +27,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Body: ${message.notification?.body}');
   debugPrint('Data: ${message.data}');
 
+  // `notification` block wala message OS khud dikhata hai (Android image ke saath,
+  // iOS par ImageNotification extension image lagata hai). Yahan dobara dikhane se
+  // duplicate notification aati hai, is liye sirf data-only message ke liye local
+  // notification dikhayein.
+  if (message.notification != null) return;
+
   // ✅ Background/terminated state এ image সহ notification দেখাতে হলে
   // local notification manually show করতে হবে (OS default notification সবসময় image render করে না)।
   try {

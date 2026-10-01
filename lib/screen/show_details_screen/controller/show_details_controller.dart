@@ -32,13 +32,16 @@ class ShowDetailsController extends GetxController {
       );
       if (response != null) {
         AppSnackBar.success("Card added to wallet");
-        merchantDetails.value?.merchant?.digitalCardId = response.toString();
+        final merchant = merchantDetails.value?.merchant;
+        merchant?.digitalCardId = response["cardId"];
+        merchant?.cardCode = response["cardCode"];
+        merchant?.availablePoints = 0;
         AppPrint.apiResponse(response, title: "Card added to wallet");
         // important UI update
 
         merchantDetails.refresh();
       } else {
-        AppPrint.appError("Failed to add card to wallet");
+        AppSnackBar.error("Failed to add card to wallet");
       }
     } catch (e) {
       errorLog("addCardForWallet", e);
@@ -89,12 +92,8 @@ class ShowDetailsController extends GetxController {
         promotionId: promotionId,
       );
       if (response) {
-        merchantDetails.value?.promotions
-                .firstWhere((element) => element.id == promotionId)
-                .buy =
-            true;
+        markPromotionAdded(promotionId);
         AppSnackBar.success("Promotion added to wallet");
-        merchantDetails.refresh();
         AppPrint.apiResponse("Promotion added to wallet");
       } else {
         AppSnackBar.error("Failed to add promotion to wallet");
@@ -103,6 +102,14 @@ class ShowDetailsController extends GetxController {
     } catch (e) {
       errorLog("addPromotionToWallet", e);
     }
+  }
+
+  /// Shows the promotion as added, e.g. after adding it from its detail screen.
+  void markPromotionAdded(String promotionId) {
+    for (final promotion in merchantDetails.value?.promotions ?? []) {
+      if (promotion.id == promotionId) promotion.buy = true;
+    }
+    merchantDetails.refresh();
   }
 
   void fetchMerchantTiar() async {

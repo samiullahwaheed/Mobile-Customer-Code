@@ -99,7 +99,7 @@ class VoucherScreen extends StatelessWidget {
                     ),
                     AppText(
                       data:
-                      "Expire On ${dateFormetterForPromotion(controller.promotion?.promotion?.endDate)}",
+                      "Expires On ${dateFormetterForPromotion(controller.promotion?.promotion?.endDate)}",
                       fontSize: AppSize.width(value: 14),
                       fontWeight: FontWeight.w500,
                       color: appThemeColor.text2,

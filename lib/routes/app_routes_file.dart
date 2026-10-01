@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:loyalty_customer/routes/app_routes.dart';
+import 'package:loyalty_customer/screen/auth/add_phone_screen/add_phone_screen.dart';
 import 'package:loyalty_customer/routes/bindings/app_binding.dart';
 import 'package:loyalty_customer/routes/bindings/auth_binding.dart';
 import 'package:loyalty_customer/routes/bindings/navigation_screen_binding.dart';
@@ -199,6 +200,11 @@ List<GetPage> appRootRoutesFile = <GetPage>[
     name: AppRoutes.instance.verifyOtpScreen,
     binding: AuthBinding(),
     page: () => const VerifyOtpScreen(),
+  ),
+  GetPage(
+    name: AppRoutes.instance.addPhoneScreen,
+    binding: AuthBinding(),
+    page: () => const AddPhoneScreen(),
   ),
   GetPage(
     name: AppRoutes.instance.forgetPassVerifyOtpScreen,

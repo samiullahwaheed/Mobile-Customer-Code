@@ -34,7 +34,7 @@ class SpecificServiceScreen extends StatelessWidget {
               }
 
               if (controller.specificPromotionList.isEmpty) {
-                return Center(child: AppText(data: "No Promotion available"));
+                return Center(child: AppText(data: "No Promotions available"));
               }
 
               return ListView.builder(
@@ -56,9 +56,13 @@ class SpecificServiceScreen extends StatelessWidget {
                                       item.id,
                               promotion: item,
                               onTapDetails: () {
+                                // Detail screen reads a map, not the promotion
                                 Get.toNamed(
                                   AppRoutes.instance.singlePromoAndRewardScreen,
-                                  arguments: item,
+                                  arguments: {
+                                    "promotion": item,
+                                    "button": item.isPromotionAdded ?? false,
+                                  },
                                 );
                               },
                               onTap: () {

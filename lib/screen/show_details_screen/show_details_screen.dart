@@ -57,7 +57,8 @@ class ShowDetailsScreen extends StatelessWidget {
                   flexibleSpace: FlexibleSpaceBar(
                     background: AppImageCircular(
                       borderRadius: 0,
-                      fit: BoxFit.fitWidth,
+                      // cover fills the header without empty bands
+                      fit: BoxFit.cover,
                       url:
                       AppApiEndPoint.mediaUrl(controller.merchantDetails.value?.merchant?.photo),
                       // width: double.infinity,
@@ -151,12 +152,14 @@ class ShowDetailsScreen extends StatelessWidget {
 
                             Column(
                               children: [
+                                // Card in wallet -> View History, else Add Card
                                 if (controller
-                                    .merchantDetails
-                                    .value
-                                    ?.merchant
-                                    ?.digitalCardId !=
-                                    "............")
+                                        .merchantDetails
+                                        .value
+                                        ?.merchant
+                                        ?.digitalCardId
+                                        ?.isNotEmpty ??
+                                    false)
                                   AppButton(
                                     onTap: () {
                                       Get.toNamed(
@@ -216,17 +219,20 @@ class ShowDetailsScreen extends StatelessWidget {
                                     height: AppSize.width(value: 32),
                                     width: AppSize.width(value: 100),
                                     titleSize: AppSize.width(value: 10),
-                                    title: "View Point & Tiers",
+                                    title: "View Points & Tiers",
                                     filColor: color.button,
                                     titleColor: AppColor.button2Dark,
                                   ),
                                 Gap(height: AppSize.width(value: 8)),
-                                if (controller
-                                    .merchantDetails
-                                    .value
-                                    ?.merchant
-                                    ?.digitalCardId ==
-                                    "")
+                                if (controller.merchantDetails.value?.merchant !=
+                                        null &&
+                                    (controller
+                                            .merchantDetails
+                                            .value
+                                            ?.merchant
+                                            ?.digitalCardId
+                                            ?.isEmpty ??
+                                        true))
                                   Obx(() {
                                     return controller
                                         .isLoadingAddCardForWallet
@@ -361,6 +367,25 @@ class ShowDetailsScreen extends StatelessWidget {
                                         promotionId: promotion?.id ?? "",
                                       );
                                     },
+                                    // Full promotion so the detail screen
+                                    // has every field; returns true if added
+                                    onTapDetails: () async {
+                                      if (promotion == null) return;
+                                      final added = await Get.toNamed(
+                                        AppRoutes
+                                            .instance
+                                            .singlePromoAndRewardScreen,
+                                        arguments: {
+                                          "promotion": promotion,
+                                          "button": promotion.buy ?? false,
+                                        },
+                                      );
+                                      if (added == true) {
+                                        controller.markPromotionAdded(
+                                          promotion.id ?? "",
+                                        );
+                                      }
+                                    },
                                   );
                                 }),
                               );
@@ -452,7 +477,7 @@ class PostDetailsItemCard extends StatelessWidget {
                   ),
                   AppText(
                     data:
-                    "Expire On ${dateFormetterForPromotion(promotion?.endDate)}",
+                    "Expires On ${dateFormetterForPromotion(promotion?.endDate)}",
                     fontSize: AppSize.width(value: 14),
                     fontWeight: FontWeight.w500,
                     color: Colors.black,

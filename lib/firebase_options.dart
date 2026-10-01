@@ -50,22 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDJfpx_mBJdtDgsTmd9JppVjsxpt95fj3w',
-    appId: '1:593611426236:android:9cd87a5138257a308083b9',
-    messagingSenderId: '593611426236',
-    projectId: 'miltech-c3007',
-    storageBucket: 'miltech-c3007.firebasestorage.app',
+    apiKey: 'AIzaSyCiBnbDtKZG8iuSJfb3NiXpV9Fv8e_Zinc',
+    appId: '1:343741785039:android:5b5437ba5302378e06e8ba',
+    messagingSenderId: '343741785039',
+    projectId: 'rewaldo-app',
+    storageBucket: 'rewaldo-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyClVQlN5Mcyg5i2j1Fv7D7en9yscUKivGk',
-    appId: '1:593611426236:ios:631c6b16dfa5739a8083b9',
-    messagingSenderId: '593611426236',
-    projectId: 'miltech-c3007',
-    storageBucket: 'miltech-c3007.firebasestorage.app',
-    androidClientId: '593611426236-epbob3ebnf6cjgdi4003jabfbkcbgjq5.apps.googleusercontent.com',
-    iosClientId: '593611426236-po9h517o4jjnimu0fnu1m1b4s0833c7j.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDduAy4F19WuJJYaz8nS19vISm2FuLwx50',
+    appId: '1:343741785039:ios:02925a01dac9385306e8ba',
+    messagingSenderId: '343741785039',
+    projectId: 'rewaldo-app',
+    storageBucket: 'rewaldo-app.firebasestorage.app',
+    androidClientId: '343741785039-gttgi7ig5pbce4bp472kr7nu6d5h38ds.apps.googleusercontent.com',
+    iosClientId: '343741785039-347u4e0lm97in3knogrupct31usacivc.apps.googleusercontent.com',
     iosBundleId: 'com.mlitech.rewaldo.customer',
   );
-
 }

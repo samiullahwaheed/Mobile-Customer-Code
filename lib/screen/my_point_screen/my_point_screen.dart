@@ -17,7 +17,7 @@ class MyPointScreen extends StatelessWidget {
       context,
     ).extension<AppThemeColor>()!;
     return Scaffold(
-      appBar: CustomAppbar(appThemeColor: appThemeColor, text: "My Point"),
+      appBar: CustomAppbar(appThemeColor: appThemeColor, text: "My Points"),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

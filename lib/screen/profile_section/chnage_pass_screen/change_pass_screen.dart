@@ -42,7 +42,7 @@ class ChangePassScreen extends StatelessWidget {
             ),
           ),
           appBar: CustomAppbar(
-            text: "Change Password",
+            text: controller.hasPassword ? "Change Password" : "Set Password",
             appThemeColor: appThemeColor,
           ),
           body: SingleChildScrollView(
@@ -92,14 +92,15 @@ class ChangePassScreen extends StatelessWidget {
                           Column(
                             spacing: AppSize.size.height * 0.01,
                             children: [
-                              AppInputWidgetTwo(
-                                validator: (value) =>
-                                    controller.validateOldPassword(value),
-                                controller: controller.oldPasswordController,
-                                isOptional: true,
-                                title: "Old Password",
-                                hintText: "Enter Old Password",
-                              ),
+                              if (controller.hasPassword)
+                                AppInputWidgetTwo(
+                                  validator: (value) =>
+                                      controller.validateOldPassword(value),
+                                  controller: controller.oldPasswordController,
+                                  isOptional: true,
+                                  title: "Old Password",
+                                  hintText: "Enter Old Password",
+                                ),
                               AppInputWidgetTwo(
                                 validator: (value) =>
                                     controller.validateNewPassword(value),

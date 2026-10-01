@@ -19,7 +19,7 @@ class ForgetPasswordController extends GetxController {
       // Phone validation: check if there's anything after the country code
       // User requested: if total length <= 4, show error
       if (value.length <= 4) {
-        return 'please enter valid phone number';
+        return 'Please enter a valid phone number';
       }
       return null;
     } else {

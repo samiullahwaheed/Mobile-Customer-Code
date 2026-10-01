@@ -39,7 +39,7 @@ class PromoAndRewardScreen extends StatelessWidget {
 
                 // যদি list empty হয় এবং loading শেষ হয়ে যায়
                 if (controller.promotionList.isEmpty) {
-                  return Center(child: AppText(data: "No Promotion available"));
+                  return Center(child: AppText(data: "No Promotions available"));
                 }
 
                 return ListView.builder(

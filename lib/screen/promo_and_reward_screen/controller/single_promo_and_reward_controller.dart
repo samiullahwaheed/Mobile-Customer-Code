@@ -12,7 +12,6 @@ class SinglePromoAndRewardController extends GetxController {
 
   PostRepository postRepository = PostRepository.instance;
   GetRepository getRepository = GetRepository.instance;
-  HomeController homeController = Get.find<HomeController>();
   Rxn<MerchantTiarModelData> tiar = Rxn<MerchantTiarModelData>();
   RxBool isLoading = false.obs;
   RxBool isLoadingFetchMerchantTiar = false.obs;
@@ -23,14 +22,19 @@ class SinglePromoAndRewardController extends GetxController {
     );
     if (response) {
       AppPrint.apiResponse("Promotion added to wallet");
-      homeController.promotionList.removeWhere(
-        (element) => element.id == promotion?.id,
-      );
-      homeController.recentViewedPromotionList.removeWhere(
-        (element) => element.id == promotion?.id,
-      );
+      // Opened from merchant details too, where Home may not be registered
+      if (Get.isRegistered<HomeController>()) {
+        final homeController = Get.find<HomeController>();
+        homeController.promotionList.removeWhere(
+          (element) => element.id == promotion?.id,
+        );
+        homeController.recentViewedPromotionList.removeWhere(
+          (element) => element.id == promotion?.id,
+        );
+      }
       AppSnackBar.success("Promotion added to wallet");
-      Get.back();
+      // true tells the opening screen the promotion is now in the wallet
+      Get.back(result: true);
     } else {
       AppPrint.appError("Failed to add promotion to wallet");
     }
@@ -38,10 +42,12 @@ class SinglePromoAndRewardController extends GetxController {
   }
 
   void fetchMerchantTiar() async {
-    if (promotion?.id == null) return;
+    // Tier belongs to the promotion's merchant, not the promotion
+    final merchantId = promotion?.merchantId?.id;
+    if (merchantId == null || merchantId.isEmpty) return;
     isLoadingFetchMerchantTiar.value = true;
     final response = await getRepository.getMerchantTiar(
-      merchantId: promotion?.id ?? "",
+      merchantId: merchantId,
     );
     if (response != null) {
       tiar.value = response;

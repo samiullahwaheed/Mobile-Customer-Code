@@ -41,7 +41,7 @@ class SignUpScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
-                            data: "Join Miltech Today!",
+                            data: "Join Rewaldo Today!",
                             fontSize: AppSize.width(value: 34),
                             fontWeight: FontWeight.w700,
                             color: AppColor.button1Light,
@@ -171,7 +171,7 @@ class SignUpScreen extends StatelessWidget {
                             Flexible(
                               child: AppText(
                                 data:
-                                    "I agree to (Company Name) Terms & Conditions.",
+                                    "I agree to Rewaldo's Terms & Conditions.",
                                 fontSize: AppSize.width(value: 12),
                                 fontWeight: FontWeight.w400,
                                 color: AppColor.button1Dark,
@@ -244,7 +244,7 @@ class SignUpScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AppText(
-                        data: "All Ready Sign Up?",
+                        data: "Already have an account?",
                         fontSize: AppSize.width(value: 12),
                         fontWeight: FontWeight.w700,
                         color: AppColor.button1Dark,

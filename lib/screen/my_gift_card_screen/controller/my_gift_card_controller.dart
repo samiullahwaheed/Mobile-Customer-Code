@@ -5,6 +5,7 @@ import 'package:loyalty_customer/screen/my_gift_card_screen/model/transaction_hi
 import 'package:loyalty_customer/service/repository/get_repository.dart';
 import 'package:loyalty_customer/service/repository/post_repository.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
+import 'package:loyalty_customer/widget/app_snackbar/app_snack_bar.dart';
 
 class MyGiftCardController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -86,7 +87,12 @@ class MyGiftCardController extends GetxController
   RxInt currentTabIndex = 0.obs;
   void fetchTransactionHistory({String? type}) async {
     transactionHistoryList.clear();
-    if (digitalCardId == null) return;
+    if (digitalCardId == null || digitalCardId!.isEmpty) {
+      // No card: stop the shimmer instead of calling the API with no id
+      isLoading.value = false;
+      AppSnackBar.error("Card not found. Please add the card first.");
+      return;
+    }
     isLoading.value = true;
 
     String transactionType = type ?? _getTransactionType(currentTabIndex.value);
@@ -121,10 +127,11 @@ class MyGiftCardController extends GetxController
     fetchTransactionHistory();
   }
 
+  // Doesn't touch isLoading: that flag belongs to the history list, and
+  // setting it here left the shimmer stuck when the history call was skipped
   void fetchMerchantTiar() async {
-    if (merchantId == null) return;
+    if (merchantId == null || merchantId!.isEmpty) return;
 
-    isLoading.value = true;
     final response = await getRepository.getMerchantTiar(
       merchantId: merchantId ?? "",
     );
@@ -133,7 +140,6 @@ class MyGiftCardController extends GetxController
     } else {
       AppPrint.appError("No Merchant Tiar Found");
     }
-    // isLoading.value = false;
   }
 
   @override

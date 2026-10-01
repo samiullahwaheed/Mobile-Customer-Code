@@ -46,7 +46,7 @@ class WalletCard extends StatelessWidget {
                   Gap(height: AppSize.width(value: 10)),
                   AppText(
                     data:
-                    "Point Available : ${digitalCard?.availablePoints.toString() ?? 0}",
+                    "Points Available : ${digitalCard?.availablePoints.toString() ?? 0}",
                     fontSize: AppSize.width(value: 18),
                     fontWeight: FontWeight.w400,
                     color: Colors.white,

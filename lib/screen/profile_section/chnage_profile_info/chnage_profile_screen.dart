@@ -137,7 +137,7 @@ class ChnageProfileScreen extends StatelessWidget {
                               controller: controller.nameController,
                               isOptional: true,
                               title: "Full Name",
-                              hintText: "Enter NAme",
+                              hintText: "Enter Name",
                             ),
 
                             AppText(

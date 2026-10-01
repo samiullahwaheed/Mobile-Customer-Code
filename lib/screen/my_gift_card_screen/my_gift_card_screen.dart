@@ -70,7 +70,7 @@ class MyGiftCardScreen extends StatelessWidget {
                                   Gap(height: AppSize.width(value: 6)),
                                   AppText(
                                     data:
-                                    "Point Available : ${controller.point?.toStringAsFixed(2) ?? 0}",
+                                    "Points Available : ${controller.point?.toStringAsFixed(2) ?? 0}",
                                     fontSize: AppSize.width(value: 12),
                                     fontWeight: FontWeight.w400,
                                     color: Colors.white,

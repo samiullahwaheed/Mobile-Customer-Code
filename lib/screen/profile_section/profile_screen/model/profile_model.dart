@@ -61,6 +61,9 @@ class ProfileModelData {
   int? totalSubscriptions;
   bool? hasUsedFreePlan;
   bool? isUserWaiting;
+  // false for accounts created with Google until they set a password
+  bool? hasPassword;
+  bool? hasReferral;
 
   ProfileModelData({
     this.location,
@@ -98,6 +101,8 @@ class ProfileModelData {
     this.address,
     this.hasUsedFreePlan,
     this.isUserWaiting,
+    this.hasPassword,
+    this.hasReferral,
   });
 
   factory ProfileModelData.fromRawJson(String str) =>
@@ -210,6 +215,11 @@ class ProfileModelData {
         json["isUserWaiting"] != null && json["isUserWaiting"] is bool
         ? json["isUserWaiting"] as bool
         : false,
+    // Older backends don't send it; assume a password exists
+    hasPassword: json["hasPassword"] is bool ? json["hasPassword"] as bool : true,
+    hasReferral:
+        json["referredInfo"] is Map &&
+        json["referredInfo"]["referredId"] != null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -253,6 +263,7 @@ class ProfileModelData {
     "totalSubscriptions": totalSubscriptions,
     "hasUsedFreePlan": hasUsedFreePlan,
     "isUserWaiting": isUserWaiting,
+    "hasPassword": hasPassword,
   };
 }
 

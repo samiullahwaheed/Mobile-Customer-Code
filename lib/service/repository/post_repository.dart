@@ -23,25 +23,27 @@ class PostRepository {
 
   final ApiServices apiServices = ApiServices.instance;
 
-  Future<dynamic?> addCardForWallet({required String merchantId}) async {
+  /// Returns `{cardId, cardCode}` of the new (or existing) card, null on failure.
+  Future<Map<String, String>?> addCardForWallet({
+    required String merchantId,
+  }) async {
     try {
       final response = await apiServices.apiPostServices(
         url: AppApiEndPoint.instance.addCardForWallet,
         body: {"merchantId": merchantId},
       );
-      if (response != null) {
-        AppPrint.apiResponse(
-          response["data"]["cardId"],
-          title: "addCardForWallet",
-        );
-        return response["data"]["cardId"];
-      } else {
-        return false;
+      final data = response?["data"];
+      if (data is Map && data["cardId"] != null) {
+        AppPrint.apiResponse(data, title: "addCardForWallet");
+        return {
+          "cardId": data["cardId"].toString(),
+          "cardCode": data["cardCode"]?.toString() ?? "",
+        };
       }
     } catch (e) {
       errorLog("addCardForWallet", e);
     }
-    return false;
+    return null;
   }
 
   Future<bool> updateUserProfile({
@@ -184,7 +186,8 @@ class PostRepository {
   }) async {
     try {
       Map<String, dynamic> body = {
-        "currentPassword": oldPassword,
+        // Empty when a Google-only account sets its first password
+        if (oldPassword.isNotEmpty) "currentPassword": oldPassword,
         "newPassword": newPassword,
         "confirmPassword": confirmPassword,
       };

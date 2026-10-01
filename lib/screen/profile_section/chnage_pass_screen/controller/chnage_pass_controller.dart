@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loyalty_customer/screen/profile_section/profile_screen/controller/profile_controller.dart';
 import 'package:loyalty_customer/service/repository/post_repository.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
 
@@ -60,6 +61,10 @@ class ChnagePassController extends GetxController {
 
         if (response) {
           controllerClear();
+          // First password set: profile menu switches "Set Password" → "Password"
+          if (!hasPassword && Get.isRegistered<ProfileController>()) {
+            Get.find<ProfileController>().fetchProfileData();
+          }
           Get.close(1);
         } else {
           isLoading.value = false;
@@ -95,9 +100,15 @@ class ChnagePassController extends GetxController {
     confirmPasswordController.clear();
   }
 
+  /// False for accounts created with Google: they set a first password
+  /// without an old one.
+  bool hasPassword = true;
+
   @override
   void onInit() {
     controllerInisialize();
+    final args = Get.arguments;
+    hasPassword = !(args is Map && args["hasPassword"] == false);
     super.onInit();
   }
 

@@ -9,11 +9,16 @@ class DeleteRepository {
 
   final ApiServices apiServices = ApiServices.instance;
 
-  Future<bool> deleteAccount({required String password}) async {
+  /// Password accounts send [password]; accounts without one (Google sign-up)
+  /// send the SMS [otp] from `AccountRepository.sendDeleteAccountOtp`.
+  Future<bool> deleteAccount({String? password, String? otp}) async {
     try {
       final response = await apiServices.apiDeleteServices(
         url: AppApiEndPoint.instance.deleteAccount,
-        body: {"password": password},
+        body: {
+          if (password != null) "password": password,
+          if (otp != null) "oneTimeCode": otp,
+        },
       );
       if (response != null) {
         return true;

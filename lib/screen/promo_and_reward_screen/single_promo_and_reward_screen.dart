@@ -111,7 +111,7 @@ class SinglePromoAndRewardScreen extends StatelessWidget {
                           children: [
                             AppText(
                               data:
-                              "Expire On ${formatDate(controller.promotion?.endDate)}",
+                              "Expires On ${formatDate(controller.promotion?.endDate)}",
                               fontSize: AppSize.width(value: 14),
                               fontWeight: FontWeight.w500,
                               color: appThemeColor.text2,

@@ -3,6 +3,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:loyalty_customer/screen/profile_section/profile_screen/model/profile_model.dart';
 import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
+import 'package:loyalty_customer/service/push_notification/fcm_service.dart';
+import 'package:loyalty_customer/service/repository/account_repository.dart';
 import 'package:loyalty_customer/service/repository/delete_repository.dart';
 import 'package:loyalty_customer/service/repository/get_repository.dart';
 import 'package:loyalty_customer/service/repository/post_repository.dart';
@@ -19,6 +21,14 @@ class ProfileController extends GetxController {
 
   TextEditingController passwordController = TextEditingController();
 
+  // Delete confirmation for accounts without a password (Google sign-up)
+  TextEditingController deleteOtpController = TextEditingController();
+  RxBool deleteOtpSent = false.obs;
+  RxBool isSendingDeleteOtp = false.obs;
+
+  /// False for accounts created with Google until they set a password.
+  bool get hasPassword => profileData.value?.hasPassword ?? true;
+
   //----------Theme Mode-----------
   void changeTheme() {
     isDark.value = !isDark.value;
@@ -30,6 +40,7 @@ class ProfileController extends GetxController {
   @override
   void dispose() {
     passwordController.dispose();
+    deleteOtpController.dispose();
     super.dispose();
   }
 
@@ -52,25 +63,27 @@ class ProfileController extends GetxController {
     updateFcmToken();
   }
 
+  /// Hits the API only if the token changed since the last successful sync.
   void updateFcmToken() async {
-    final response = await postRepository.updateUserProfile(
-      fcmToken: getStorage.getFCMtoken(),
-    );
-    if (response) {
-      AppPrint.apiResponse(
-        "Update FCM Token Success",
-        title: "token update form profileController",
-      );
-    } else {
-      AppPrint.appError("Update FCM Token Failed", title: "profileController");
+    await FCMService.syncTokenWithBackend();
+  }
+
+  /// Sends the SMS code that confirms deleting an account without a password.
+  Future<void> sendDeleteOtp() async {
+    if (isSendingDeleteOtp.value) return;
+    isSendingDeleteOtp.value = true;
+    final sent = await AccountRepository.instance.sendDeleteAccountOtp();
+    isSendingDeleteOtp.value = false;
+    if (sent) {
+      deleteOtpSent.value = true;
+      AppSnackBar.success("We sent a code to your phone");
     }
   }
 
   void deleteAccount() async {
-    
-    final response = await deleteRepository.deleteAccount(
-      password: passwordController.text,
-    );
+    final response = hasPassword
+        ? await deleteRepository.deleteAccount(password: passwordController.text)
+        : await deleteRepository.deleteAccount(otp: deleteOtpController.text);
     if (response) {
       getStorage.completeLogout();
       AppSnackBar.success("Account deleted successfully");

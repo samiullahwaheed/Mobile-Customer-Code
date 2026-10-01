@@ -11,7 +11,7 @@ import GoogleMaps   // ✅ Google Maps SDK
   ) -> Bool {
 
     // 🔑 Google Maps API Key
-    GMSServices.provideAPIKey("AIzaSyCVoe2GBYsk1jU6E9RFIxhVfsyBCSkMX_w")
+    GMSServices.provideAPIKey("AIzaSyCCIwI5oUsQm2-iyM01ZAzWunf6NZ51EYs")
 
     // 🔹 Flutter plugins register
     GeneratedPluginRegistrant.register(with: self)

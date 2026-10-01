@@ -189,7 +189,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(
-                      data: "Explore Shop on the Map",
+                      data: "Explore Shops on the Map",
                       fontSize: AppSize.width(value: 18),
                       fontWeight: FontWeight.w700,
                       color: appThemeColor.text2,

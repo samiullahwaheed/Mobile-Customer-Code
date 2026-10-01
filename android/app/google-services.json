@@ -1,48 +1,92 @@
 {
   "project_info": {
-    "project_number": "593611426236",
-    "project_id": "miltech-c3007",
-    "storage_bucket": "miltech-c3007.firebasestorage.app"
+    "project_number": "343741785039",
+    "project_id": "rewaldo-app",
+    "storage_bucket": "rewaldo-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:593611426236:android:9cd87a5138257a308083b9",
+        "mobilesdk_app_id": "1:343741785039:android:35532117636b02a706e8ba",
         "android_client_info": {
-          "package_name": "com.miltech.miltech"
+          "package_name": "com.miltech.merchent"
         }
       },
       "oauth_client": [
         {
-          "client_id": "593611426236-epbob3ebnf6cjgdi4003jabfbkcbgjq5.apps.googleusercontent.com",
+          "client_id": "343741785039-ict84q5qvqu60mnan9hkb0grldho04cg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.miltech.miltech",
-            "certificate_hash": "39c5394c83700f7931556a54ae0ed0f6805ffd6f"
+            "package_name": "com.miltech.merchent",
+            "certificate_hash": "a595a2df2ed2c59140cbb8653351b8e904244915"
           }
         },
         {
-          "client_id": "593611426236-c0aqlvlgbg1jnd5lm3tjmnqjurevdljh.apps.googleusercontent.com",
+          "client_id": "343741785039-nofsm57rou6laol4mm175pk0itcg02vs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDJfpx_mBJdtDgsTmd9JppVjsxpt95fj3w"
+          "current_key": "AIzaSyCiBnbDtKZG8iuSJfb3NiXpV9Fv8e_Zinc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "593611426236-c0aqlvlgbg1jnd5lm3tjmnqjurevdljh.apps.googleusercontent.com",
+              "client_id": "343741785039-bq6jack9kbti0q9e1fuc9vb5mvlplf2i.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "593611426236-vdp2b9v965bhqdmii1bncssa6nsiuot4.apps.googleusercontent.com",
+              "client_id": "343741785039-347u4e0lm97in3knogrupct31usacivc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.miltech.miltech"
+                "bundle_id": "com.mlitech.rewaldo.customer"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343741785039:android:5b5437ba5302378e06e8ba",
+        "android_client_info": {
+          "package_name": "com.miltech.miltech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343741785039-gttgi7ig5pbce4bp472kr7nu6d5h38ds.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.miltech.miltech",
+            "certificate_hash": "2537945089c258b5cb9d6b70c04a80207bc69361"
+          }
+        },
+        {
+          "client_id": "343741785039-nofsm57rou6laol4mm175pk0itcg02vs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiBnbDtKZG8iuSJfb3NiXpV9Fv8e_Zinc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343741785039-bq6jack9kbti0q9e1fuc9vb5mvlplf2i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "343741785039-347u4e0lm97in3knogrupct31usacivc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mlitech.rewaldo.customer"
               }
             }
           ]
