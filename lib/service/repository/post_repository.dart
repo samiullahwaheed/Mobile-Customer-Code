@@ -56,7 +56,6 @@ class PostRepository {
     String? longitude,
     String? profile,
     String? fcmToken,
-    String? apnsToken,
 
     // 🔔 Notification Settings
     bool? promotionalEmails,
@@ -94,7 +93,6 @@ class PostRepository {
       addIfValid("longitude", longitude);
       addIfValid("interestedIn", interestedIn);
       addIfValid("fcmToken", fcmToken);
-      addIfValid("apnsToken", apnsToken);
 
       // -------------------------------
       // 🔔 NOTIFICATION SETTINGS OBJECT

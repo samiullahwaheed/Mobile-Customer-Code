@@ -56,6 +56,7 @@ class PostRepository {
     String? longitude,
     String? profile,
     String? fcmToken,
+
     // 🔔 Notification Settings
     bool? promotionalEmails,
     bool? appNotifications,

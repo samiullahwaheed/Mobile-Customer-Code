@@ -6,7 +6,6 @@ import 'package:loyalty_customer/service/push_notification/fcm_service.dart';
 import 'package:loyalty_customer/service/repository/auth_repository.dart';
 import 'package:loyalty_customer/service/repository/post_repository.dart';
 import 'package:loyalty_customer/widget/app_log/app_print.dart';
-import 'dart:io' show Platform;
 
 class SignInController extends GetxController {
   final GlobalKey<FormState> signinKey = GlobalKey<FormState>();
@@ -108,17 +107,7 @@ class SignInController extends GetxController {
         );
         return;
       }
-
-      // 🍎 iOS ke liye raw APNs token bhi lein
-      String? apnsToken;
-      if (Platform.isIOS) {
-        apnsToken = await FCMService.getAPNSToken();
-      }
-
-      await postRepository.updateUserProfile(
-        fcmToken: fcmToken,
-        apnsToken: apnsToken,
-      );
+      await postRepository.updateUserProfile(fcmToken: fcmToken);
       AppPrint.apiResponse(fcmToken, title: "FCM Token Updated correctly");
     } catch (e) {
       AppPrint.appError(e, title: "FCM Update Failed");
