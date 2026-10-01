@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import GoogleMaps   // ✅ Google Maps SDK
+import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -12,6 +13,7 @@ import GoogleMaps   // ✅ Google Maps SDK
 
     // 🔑 Google Maps API Key
     GMSServices.provideAPIKey("AIzaSyCCIwI5oUsQm2-iyM01ZAzWunf6NZ51EYs")
+    UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
 
     // 🔹 Flutter plugins register
     GeneratedPluginRegistrant.register(with: self)
