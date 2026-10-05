@@ -138,6 +138,48 @@ class AuthRepository {
     }
   }
 
+  /// Sign in with Apple. Same contract as [googleAuth]: saves the tokens and
+  /// returns the login `user` summary, or null when it failed.
+  Future<Map<String, dynamic>?> appleAuth({
+    required String identityToken,
+    required String rawNonce,
+    required String authorizationCode,
+    String? firstName,
+    String? lastName,
+    String? fcmToken,
+  }) async {
+    try {
+      appInPutUnfocused();
+
+      final response = await nonAuthApi.sendRequest.post(
+        AppApiEndPoint.instance.appleAuth,
+        data: {
+          "identityToken": identityToken,
+          "rawNonce": rawNonce,
+          "authorizationCode": authorizationCode,
+          if (firstName != null && firstName.isNotEmpty) "firstName": firstName,
+          if (lastName != null && lastName.isNotEmpty) "lastName": lastName,
+          if (fcmToken != null && fcmToken.isNotEmpty) "fcmToken": fcmToken,
+        },
+      );
+
+      final data = response.data is Map ? response.data["data"] : null;
+      if (response.statusCode == 200 && data is Map && data["user"] is Map) {
+        await _saveAuthTokens(Map<String, dynamic>.from(data));
+        return Map<String, dynamic>.from(data["user"]);
+      }
+
+      AppPrint.apiResponse("Apple login: unexpected response");
+      return null;
+    } on DioException catch (error) {
+      AppSnackBar.error(_dioMessage(error));
+      return null;
+    } catch (e) {
+      errorLog("appleAuth", e);
+      return null;
+    }
+  }
+
   Future<dynamic> login({
     required String email,
     required String password,

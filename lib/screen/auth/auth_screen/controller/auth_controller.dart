@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:loyalty_customer/service/apple_auth_service/apple_auth_service.dart';
 import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
 import 'package:loyalty_customer/service/auth_navigation/auth_navigation.dart';
 import 'package:loyalty_customer/service/google_auth_service/google_auth_service.dart';
@@ -9,6 +10,7 @@ import 'package:loyalty_customer/widget/app_snackbar/app_snack_bar.dart';
 
 class AuthController extends GetxController {
   final GoogleAuthService googleAuthService = GoogleAuthService();
+  final AppleAuthService appleAuthService = AppleAuthService();
   final AuthRepository authRepository = AuthRepository.instance;
 
   final RxBool isLoading = false.obs;
@@ -50,7 +52,43 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> googleAuth({required String idToken}) async {
+  Future<void> googleAuth({required String idToken}) {
+    return _socialLogin(
+      title: "Google login user",
+      request: (fcmToken) =>
+          authRepository.googleAuth(idToken: idToken, fcmToken: fcmToken),
+    );
+  }
+
+  Future<void> loginWithApple() async {
+    if (isLoading.value) return;
+    try {
+      final result = await appleAuthService.signIn();
+      if (result == null) return; // user closed the Apple sheet
+
+      await _socialLogin(
+        title: "Apple login user",
+        request: (fcmToken) => authRepository.appleAuth(
+          identityToken: result.identityToken,
+          rawNonce: result.rawNonce,
+          authorizationCode: result.authorizationCode,
+          firstName: result.firstName,
+          lastName: result.lastName,
+          fcmToken: fcmToken,
+        ),
+      );
+    } catch (e) {
+      AppPrint.appError(e, title: "Apple Sign In Error");
+      AppSnackBar.error("Apple Sign In Failed");
+    }
+  }
+
+  /// Shared by Google and Apple: sends the login with the FCM token, then
+  /// opens the same next screen as password login.
+  Future<void> _socialLogin({
+    required String title,
+    required Future<Map<String, dynamic>?> Function(String? fcmToken) request,
+  }) async {
     isLoading.value = true;
     try {
       final storage = GetStorageServices.instance;
@@ -59,10 +97,7 @@ class AuthController extends GetxController {
         fcmToken = await FCMService.getToken();
       }
 
-      final user = await authRepository.googleAuth(
-        idToken: idToken,
-        fcmToken: fcmToken,
-      );
+      final user = await request(fcmToken);
       if (user == null) return; // error already shown
 
       // Backend saved the FCM token with the login
@@ -70,7 +105,7 @@ class AuthController extends GetxController {
         await storage.setSyncedFCMtoken(fcmToken);
       }
 
-      AppPrint.apiResponse(user, title: "Google login user");
+      AppPrint.apiResponse(user, title: title);
       AuthNavigation.afterLogin(user);
     } catch (e) {
       AppSnackBar.error("Server error. Please try again");

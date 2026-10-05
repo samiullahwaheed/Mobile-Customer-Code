@@ -12,7 +12,6 @@ import 'package:loyalty_customer/widget/app_button/app_button.dart';
 import 'package:loyalty_customer/widget/app_image/app_image.dart';
 import 'package:loyalty_customer/widget/app_image/app_image_circular.dart';
 import 'package:loyalty_customer/widget/app_log/gap.dart';
-import 'package:loyalty_customer/widget/app_snackbar/app_snack_bar.dart';
 import 'package:loyalty_customer/widget/app_text/app_text.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -113,7 +112,7 @@ class AuthScreen extends StatelessWidget {
                     if (Platform.isIOS)
                     GestureDetector(
                       onTap: () {
-                        AppSnackBar.message("Not Implemented Yet");
+                        controller.loginWithApple();
                       },
                       child: Container(
                         width: AppSize.width(value: double.infinity),

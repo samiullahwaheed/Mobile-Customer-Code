@@ -10,8 +10,8 @@ class AppApiEndPoint {
   /// (no dart-define flags) works out of the box.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    // defaultValue: 'https://api.rewaldo.com',
-    defaultValue: 'https://staging.rewaldo.com',
+    defaultValue: 'https://api.rewaldo.com',
+    // defaultValue: 'https://staging.rewaldo.com',
   );
 
   /// Defaults to [apiBaseUrl] when not set separately.
@@ -72,6 +72,7 @@ class AppApiEndPoint {
 
   ////Auth/////////////
   final String googleAuth = '/auth/google';
+  final String appleAuth = '/auth/apple';
   final String login = '/auth/login';
   final String resetToken = '/auth/refresh-token';
   final String signUp = '/user';
