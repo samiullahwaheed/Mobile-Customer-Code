@@ -10,8 +10,8 @@ class AppApiEndPoint {
   /// (no dart-define flags) works out of the box.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.rewaldo.com',
-    // defaultValue: 'https://staging.rewaldo.com',
+    // defaultValue: 'https://api.rewaldo.com',
+    defaultValue: 'https://staging.rewaldo.com',
   );
 
   /// Defaults to [apiBaseUrl] when not set separately.
